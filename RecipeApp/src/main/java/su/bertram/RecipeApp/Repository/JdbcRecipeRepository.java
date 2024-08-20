@@ -33,7 +33,7 @@ public class JdbcRecipeRepository implements RecipeRepository{
     @Override
     public Recipe findById(long id){
         try {
-            Recipe recipe = jdbcTemplate.queryForObject("SELECT * FROM recipe WHERE id=?",
+            Recipe recipe = jdbcTemplate.queryForObject("SELECT recipe_id, title, url, created_at AS createdAt FROM recipe WHERE id=?",
                     BeanPropertyRowMapper.newInstance(Recipe.class), id);
 
             return recipe;
@@ -49,12 +49,12 @@ public class JdbcRecipeRepository implements RecipeRepository{
 
     @Override
     public List<Recipe> findAll() {
-        return jdbcTemplate.query("SELECT * from recipe", BeanPropertyRowMapper.newInstance(Recipe.class));
+        return jdbcTemplate.query("SELECT recipe_id, title, url, created_at AS createdAt FROM recipe", BeanPropertyRowMapper.newInstance(Recipe.class));
     }
 
     @Override
     public List<Recipe> findByTitleContaining(String title) {
-        String q = "SELECT * from recipe WHERE title ILIKE '%" + title + "%'";
+        String q = "SELECT recipe_id, title, url, created_at AS createdAt FROM recipe WHERE title ILIKE '%" + title + "%'";
 
         return jdbcTemplate.query(q, BeanPropertyRowMapper.newInstance(Recipe.class));
     }

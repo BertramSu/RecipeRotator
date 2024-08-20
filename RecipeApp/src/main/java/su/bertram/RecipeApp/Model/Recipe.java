@@ -1,12 +1,12 @@
 package su.bertram.RecipeApp.Model;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 public class Recipe {
     private long id;
     private String title;
     private String url;
-    private Date createdAt;
+    private LocalDateTime createdAt;
 
     // Constructors
     public Recipe() {
@@ -49,7 +49,7 @@ public class Recipe {
         this.url = url;
     }
 
-    public Date getCreatedAt() {
+    public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
