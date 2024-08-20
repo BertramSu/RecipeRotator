@@ -25,7 +25,7 @@ public class JdbcRecipeRepository implements RecipeRepository{
 
     @Override
     public int update(Recipe recipe){
-        String cmd = "UPDATE recipe SET title=?, url=? WHERE id=?";
+        String cmd = "UPDATE recipe SET title=?, url=? WHERE recipe_id=?";
         Object[] params = { recipe.getTitle(), recipe.getUrl(), recipe.getRecipeId()};
         return jdbcTemplate.update(cmd, params);
     }
@@ -33,7 +33,7 @@ public class JdbcRecipeRepository implements RecipeRepository{
     @Override
     public Recipe findById(long id){
         try {
-            Recipe recipe = jdbcTemplate.queryForObject("SELECT recipe_id, title, url, created_at AS createdAt FROM recipe WHERE id=?",
+            Recipe recipe = jdbcTemplate.queryForObject("SELECT * FROM recipe WHERE recipe_id=?",
                     BeanPropertyRowMapper.newInstance(Recipe.class), id);
 
             return recipe;
@@ -44,7 +44,7 @@ public class JdbcRecipeRepository implements RecipeRepository{
 
     @Override
     public int deleteById(long id) {
-        return jdbcTemplate.update("DELETE FROM recipe WHERE id=?", id);
+        return jdbcTemplate.update("DELETE FROM recipe WHERE recipe_id=?", id);
     }
 
     @Override

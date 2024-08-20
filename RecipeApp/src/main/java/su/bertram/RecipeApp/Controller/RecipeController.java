@@ -72,7 +72,7 @@ public class RecipeController {
         Recipe _recipe = recipeRepository.findById(id);
 
         if (_recipe != null){
-            _recipe.setRecipeId(recipe.getRecipeId());
+            //_recipe.setRecipeId(recipe.getRecipeId());
             _recipe.setTitle(recipe.getTitle());
             _recipe.setUrl(recipe.getUrl());
 
