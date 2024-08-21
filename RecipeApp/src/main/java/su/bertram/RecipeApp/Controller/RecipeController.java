@@ -3,7 +3,6 @@ package su.bertram.RecipeApp.Controller;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.tomcat.util.http.parser.HttpParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -72,7 +71,6 @@ public class RecipeController {
         Recipe _recipe = recipeRepository.findById(id);
 
         if (_recipe != null){
-            //_recipe.setRecipeId(recipe.getRecipeId());
             _recipe.setTitle(recipe.getTitle());
             _recipe.setUrl(recipe.getUrl());
 
