@@ -39,6 +39,8 @@ func main() {
 	router.GET("/comments", getAllComments)
 	router.GET("/comment/:id", getCommentById)
 	router.POST("/comment", postComment)
+	router.PUT("/comment", updateComment)
+	router.DELETE("/comment/:id", deleteCommentById)
 
 	router.Run("localhost:8080")
 }
@@ -141,6 +143,78 @@ func postComment(c *gin.Context) {
 	qErr := conn.QueryRow(context.Background(), query, args).Scan(&id)
 	if qErr != nil {
 		log.Fatalf("Query failed insertAlbum: %v", qErr)
+		return
+	}
+
+	c.IndentedJSON(http.StatusCreated, newComment)
+}
+
+func deleteCommentById(c *gin.Context) {
+	id := c.Param("id")
+
+	// Connect to the database
+	conn, err := pgx.Connect(context.Background(), connStr)
+	if err != nil {
+		log.Fatalf("Unable to connect to database: %v", err)
+	}
+	defer conn.Close(context.Background())
+
+	query := `
+	DELETE
+	FROM comment
+	WHERE
+		comment_id = @id
+	RETURNING comment_id
+	`
+	args := pgx.NamedArgs{
+		"id": id,
+	}
+
+	commandTag, err := conn.Exec(context.Background(), query, args)
+	if err != nil {
+		log.Fatal("Query failed delete comment.")
+		return
+	}
+
+	if commandTag.RowsAffected() != 1 {
+		log.Fatalf("No comment found with ID %d", id)
+		return
+	}
+
+	c.IndentedJSON(http.StatusOK, id)
+}
+
+func updateComment(c *gin.Context) {
+	var newComment Comment
+
+	if err := c.BindJSON(&newComment); err != nil {
+		log.Fatal("Cannot bind newComment")
+		return
+	}
+
+	conn, err := pgx.Connect(context.Background(), connStr)
+	if err != nil {
+		log.Fatalf("Unable to connect to database: %v", err)
+		return
+	}
+	defer conn.Close(context.Background())
+
+	query := `
+	UPDATE comment
+	SET body= @body
+	WHERE comment_id = @id
+	RETURNING comment_id
+	`
+
+	args := pgx.NamedArgs{
+		"id":   newComment.ID,
+		"body": newComment.Body,
+	}
+
+	var id int
+	qErr := conn.QueryRow(context.Background(), query, args).Scan(&id)
+	if qErr != nil {
+		log.Fatalf("Query failed updateComment: %v", qErr)
 		return
 	}
 
