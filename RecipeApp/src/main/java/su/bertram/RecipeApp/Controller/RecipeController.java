@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import su.bertram.RecipeApp.Model.Recipe;
 import su.bertram.RecipeApp.Repository.RecipeRepository;
+import su.bertram.RecipeApp.Service.RecipeService;
 
 @CrossOrigin(origins = "http://localhost:8081")
 @RestController
@@ -26,6 +27,9 @@ public class RecipeController {
 
     @Autowired
     RecipeRepository recipeRepository;
+
+    @Autowired
+    RecipeService recipeService;
 
     @GetMapping("/recipes")
     public ResponseEntity<List<Recipe>> getAllRecipes(@RequestParam(required = false) String title){
@@ -83,8 +87,8 @@ public class RecipeController {
     @DeleteMapping("recipe/{id}")
     public ResponseEntity<String> deleteRecipe(@PathVariable("id") long id){
         try {
-            int result = recipeRepository.deleteById(id);
-            if (result == 0)
+            int deletedId = recipeService.deleteById(id);
+            if (deletedId == 0)
                 return new ResponseEntity<>("Cannot find Recipe with id=" + id, HttpStatus.OK);
 
             return new ResponseEntity<>("Recipe was deleted successfully.", HttpStatus.OK);
