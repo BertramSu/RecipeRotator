@@ -21,9 +21,9 @@ type Config struct {
 
 var cfg = Config{
 	Username:     "admin",
-	Password:     "root",
-	Address:      "localhost:5432",
-	DatabaseName: "commentdb",
+	Password:     "passwordHere",
+	Address:      "localhost:5434",
+	DatabaseName: "CommentDB",
 }
 
 var connStr = fmt.Sprintf("postgres://%s:%s@%s/%s", cfg.Username, cfg.Password, cfg.Address, cfg.DatabaseName)
@@ -42,7 +42,7 @@ func main() {
 	router.PUT("/comment", updateComment)
 	router.DELETE("/comment/:id", deleteCommentById)
 
-	router.Run("localhost:8080")
+	router.Run("localhost:8085")
 }
 
 func getAllComments(c *gin.Context) {
