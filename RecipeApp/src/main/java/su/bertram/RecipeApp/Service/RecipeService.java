@@ -22,7 +22,7 @@ public class RecipeService {
 
         // Publish that the comment was deleted if it was successfully deleted.
         //if (deletedRecipeId != 0)
-        messageProducer.sendMessage("delete-recipe-topic", ((Long) id).toString());
+        messageProducer.sendMessage("delete-recipe-topic", "{ \"id\": "+id +", \"name\": \"bertram\"}");
 
         return deletedRecipeId;
     }
