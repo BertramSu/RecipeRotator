@@ -12,12 +12,11 @@ import (
 	"github.com/jackc/pgx/v5"
 
 	"encoding/json"
-	"sync"
 
 	"github.com/IBM/sarama"
 )
 
-type MyId struct {
+type DeletedRecipe struct {
 	ID int `json:"id"`
 }
 
@@ -51,16 +50,10 @@ type Comment struct {
 }
 
 func main() {
-	store := &NotificationStore{
-		data: make(UserNotifications),
-	}
-
 	ctx, cancel := context.WithCancel(context.Background())
-	go setupConsumerGroup(ctx, store)
+	go setupConsumerGroup(ctx)
 	defer cancel()
 
-	//gin.SetMode(gin.ReleaseMode)
-	fmt.Print("Made it to default")
 	router := gin.Default()
 	router.GET("/comments", getAllComments)
 	router.GET("/comment/:id", getCommentById)
@@ -254,23 +247,8 @@ func updateComment(c *gin.Context) {
 	c.IndentedJSON(http.StatusCreated, newComment)
 }
 
-// ====== NOTIFICATION STORAGE ======
-type UserNotifications map[string][]MyId
-
-type NotificationStore struct {
-	data UserNotifications
-	mu   sync.RWMutex
-}
-
-func (ns *NotificationStore) Add(userID string, notification MyId) {
-	ns.mu.Lock()
-	defer ns.mu.Unlock()
-	ns.data[userID] = append(ns.data[userID], notification)
-}
-
 // Kafka functions.
 type Consumer struct {
-	store *NotificationStore
 }
 
 // These three are require by the interface.
@@ -280,17 +258,15 @@ func (*Consumer) Cleanup(sarama.ConsumerGroupSession) error { return nil }
 func (consumer *Consumer) ConsumeClaim(
 	sess sarama.ConsumerGroupSession, claim sarama.ConsumerGroupClaim) error {
 	for msg := range claim.Messages() {
-		var notification MyId
-		err := json.Unmarshal(msg.Value, &notification)
+		var deletedRecipe DeletedRecipe
+		err := json.Unmarshal(msg.Value, &deletedRecipe)
 		if err != nil {
 			log.Printf("failed to unmarshal notification: %v", err)
 			continue
 		}
-		//consumer.store.Add(userID, notification)
-		print("Consumed: ")
-		fmt.Println(notification)
+		print("Consumed deleted recipe id: ")
+		fmt.Println(deletedRecipe.ID)
 		sess.MarkMessage(msg, "")
-		println("Marked")
 	}
 	return nil
 }
@@ -306,18 +282,15 @@ func initializeConsumerGroup() (sarama.ConsumerGroup, error) {
 	return consumerGroup, nil
 }
 
-func setupConsumerGroup(ctx context.Context, store *NotificationStore) {
+func setupConsumerGroup(ctx context.Context) {
 	consumerGroup, err := initializeConsumerGroup()
 	if err != nil {
 		log.Printf("initialization error: %v", err)
 	}
 	defer consumerGroup.Close()
 
-	consumer := &Consumer{
-		store: store,
-	}
+	consumer := &Consumer{}
 	for {
-		fmt.Print("This is the consume loop \n")
 		err = consumerGroup.Consume(ctx, []string{ConsumerTopic}, consumer)
 		if err != nil {
 			log.Printf("error from consumer: %v", err)
