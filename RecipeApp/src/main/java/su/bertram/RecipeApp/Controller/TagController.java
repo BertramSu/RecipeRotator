@@ -57,7 +57,7 @@ public class TagController {
     public ResponseEntity<String> createRecipe(@RequestBody Tag tag){
         try {
             tagRepository.save(new Tag(tag.getName()));
-            return new ResponseEntity<>("Recipe was created successfully.", HttpStatus.CREATED);
+            return new ResponseEntity<>("Tag was created successfully.", HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -70,9 +70,9 @@ public class TagController {
         if (_tag.isPresent()){
             _tag.get().setName(tag.getName());
             tagRepository.save(_tag.get());
-            return new ResponseEntity<>("Recipe was successfully updated.", HttpStatus.OK);
+            return new ResponseEntity<>("Tag was successfully updated.", HttpStatus.OK);
         }else
-            return new ResponseEntity<>("Cannot find Recipe with id=" + id, HttpStatus.OK);
+            return new ResponseEntity<>("Cannot find tag with id=" + id, HttpStatus.OK);
     }
 
     @DeleteMapping("tag/{id}")
@@ -80,12 +80,12 @@ public class TagController {
         try {
             Optional<Tag> tagToBeDeleted = tagRepository.findById(id);
             if (tagToBeDeleted.isEmpty())
-                return new ResponseEntity<>("Cannot find Recipe with id=" + id, HttpStatus.OK);
+                return new ResponseEntity<>("Cannot find tag with id=" + id, HttpStatus.OK);
 
             tagRepository.deleteById(id);
-            return new ResponseEntity<>("Recipe was deleted successfully.", HttpStatus.OK);
+            return new ResponseEntity<>("Tag was deleted successfully.", HttpStatus.OK);
         } catch (Exception e){
-            return new ResponseEntity<>("Cannot delete recipe.", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Cannot delete tag.", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }
