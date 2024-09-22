@@ -15,4 +15,6 @@ public interface RecipeRepository {
     List<Recipe> findAll();
 
     List<Recipe> findByTitleContaining(String title);
+
+    List<Recipe> findRecipesByTagId(long tagId);
 }

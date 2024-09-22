@@ -2,6 +2,7 @@ package su.bertram.RecipeApp.Controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,90 +18,74 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import su.bertram.RecipeApp.Model.Recipe;
-import su.bertram.RecipeApp.Repository.RecipeRepository;
-import su.bertram.RecipeApp.Service.RecipeService;
+import su.bertram.RecipeApp.Model.Tag;
+import su.bertram.RecipeApp.Repository.TagRepository;
 
 @CrossOrigin(origins = "http://localhost:8081")
 @RestController
 @RequestMapping("/api")
-public class RecipeController {
-
+public class TagController {
     @Autowired
-    RecipeRepository recipeRepository;
+    TagRepository tagRepository;
 
-    @Autowired
-    RecipeService recipeService;
-
-    @GetMapping("/recipes")
-    public ResponseEntity<List<Recipe>> getAllRecipes(@RequestParam(required = false) String title){
+    @GetMapping("/tags")
+    public ResponseEntity<List<Tag>> getAllRecipes(@RequestParam(required = false) String title){
         try{
-            List<Recipe> recipes = new ArrayList<Recipe>();
+            List<Tag> tags = new ArrayList<Tag>();
+            tags.addAll(tagRepository.findAll());
 
-            if (title == null)
-                recipes.addAll(recipeRepository.findAll());
-            else
-                recipes.addAll(recipeRepository.findByTitleContaining(title));
-
-            if (recipes.isEmpty())
+            if (tags.isEmpty())
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 
-            return new ResponseEntity<>(recipes, HttpStatus.OK);
+            return new ResponseEntity<>(tags, HttpStatus.OK);
         } catch (Exception e){
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    @GetMapping("/recipe/{id}")
-    public ResponseEntity<Recipe> getRecipeById(@PathVariable("id") long id){
-        Recipe recipe = recipeRepository.findById(id);
+    @GetMapping("/tag/{id}")
+    public ResponseEntity<Optional<Tag>> getRecipeById(@PathVariable("id") long id){
+        Optional<Tag> tag = tagRepository.findById(id);
 
-        if (recipe != null)
-            return new ResponseEntity<>(recipe, HttpStatus.OK);
+        if (tag.isPresent())
+            return new ResponseEntity<>(tag, HttpStatus.OK);
         else
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @PostMapping("/recipe")
-    public ResponseEntity<String> createRecipe(@RequestBody Recipe recipe){
+    @PostMapping("/tag")
+    public ResponseEntity<String> createRecipe(@RequestBody Tag tag){
         try {
-            recipeRepository.save(new Recipe(recipe.getTitle(), recipe.getUrl()));
+            tagRepository.save(new Tag(tag.getName()));
             return new ResponseEntity<>("Recipe was created successfully.", HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    @PutMapping("/recipe/{id}")
-    public ResponseEntity<String> updateRecipe(@PathVariable("id") long id, @RequestBody Recipe recipe){
-        Recipe _recipe = recipeRepository.findById(id);
+    @PutMapping("/tag/{id}")
+    public ResponseEntity<String> updateRecipe(@PathVariable("id") long id, @RequestBody Tag tag){
+        Optional<Tag> _tag = tagRepository.findById(id);
 
-        if (_recipe != null){
-            _recipe.setTitle(recipe.getTitle());
-            _recipe.setUrl(recipe.getUrl());
-
-            recipeRepository.update(_recipe);
+        if (_tag.isPresent()){
+            _tag.get().setName(tag.getName());
+            tagRepository.save(_tag.get());
             return new ResponseEntity<>("Recipe was successfully updated.", HttpStatus.OK);
         }else
             return new ResponseEntity<>("Cannot find Recipe with id=" + id, HttpStatus.OK);
     }
 
-    @DeleteMapping("recipe/{id}")
+    @DeleteMapping("tag/{id}")
     public ResponseEntity<String> deleteRecipe(@PathVariable("id") long id){
         try {
-            int deletedId = recipeService.deleteById(id);
-            if (deletedId == 0)
+            Optional<Tag> tagToBeDeleted = tagRepository.findById(id);
+            if (tagToBeDeleted.isEmpty())
                 return new ResponseEntity<>("Cannot find Recipe with id=" + id, HttpStatus.OK);
 
+            tagRepository.deleteById(id);
             return new ResponseEntity<>("Recipe was deleted successfully.", HttpStatus.OK);
         } catch (Exception e){
             return new ResponseEntity<>("Cannot delete recipe.", HttpStatus.INTERNAL_SERVER_ERROR);
         }
-    }
-
-    @GetMapping("tag/{id}/recipes")
-    public ResponseEntity<List<Recipe>> RecipesByTagId(@PathVariable("id") long id){
-        List<Recipe> recipes = new ArrayList<Recipe>();
-        recipes.addAll(recipeRepository.findRecipesByTagId(id));
-        return new ResponseEntity<List<Recipe>>(recipes, HttpStatus.OK);
     }
 }

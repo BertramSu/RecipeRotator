@@ -58,4 +58,20 @@ public class JdbcRecipeRepository implements RecipeRepository{
 
         return jdbcTemplate.query(q, BeanPropertyRowMapper.newInstance(Recipe.class));
     }
+
+    @Override
+    public List<Recipe> findRecipesByTagId(long tagId){
+        String q = "SELECT\n" +
+                "    r.recipe_id ,\n" +
+                "    r.title,\n" +
+                "    r.url\n" +
+                "FROM \n" +
+                "    recipetag AS rt \n" +
+                "    INNER JOIN recipe AS r on rt.recipe_id = r.recipe_id\n" +
+                "WHERE \n" +
+                "    rt.tag_id = " +tagId;
+
+        return jdbcTemplate.query(q, BeanPropertyRowMapper.newInstance(Recipe.class));
+    }
+
 }
