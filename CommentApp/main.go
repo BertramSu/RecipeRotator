@@ -60,6 +60,7 @@ func main() {
 	router.POST("/comment", postComment)
 	router.PUT("/comment", updateComment)
 	router.DELETE("/comment/:id", deleteCommentById)
+	router.GET("/recipe/:id/comments", getCommentsByRecipeId)
 
 	router.Run("localhost:8085")
 
@@ -137,6 +138,43 @@ func getCommentById(c *gin.Context) {
 		c.IndentedJSON(http.StatusNotFound, gin.H{"message": "comment not found"})
 	}
 	c.IndentedJSON(http.StatusOK, comment)
+}
+
+func getCommentsByRecipeId(c *gin.Context) {
+	id := c.Param("id")
+
+	// Connect to the database
+	conn, err := pgx.Connect(context.Background(), connStr)
+	if err != nil {
+		log.Fatalf("Unable to connect to database: %v", err)
+	}
+	defer conn.Close(context.Background())
+
+	query := `
+	SELECT
+		comment_id AS Id,
+		recipe_id AS RecipeId,
+		body AS Body
+	FROM
+		comment
+	WHERE
+		recipe_id = @id
+	`
+	args := pgx.NamedArgs{
+		"id": id,
+	}
+
+	rows, err := conn.Query(context.Background(), query, args)
+	if err != nil {
+		log.Fatalf("Query failed getAllComments: %v", err)
+	}
+	defer rows.Close()
+
+	comments, err := pgx.CollectRows(rows, pgx.RowToStructByName[Comment])
+	if err != nil {
+		log.Fatalf("Conversion failed getAllComments: %v", err)
+	}
+	c.IndentedJSON(http.StatusOK, comments)
 }
 
 func postComment(c *gin.Context) {
