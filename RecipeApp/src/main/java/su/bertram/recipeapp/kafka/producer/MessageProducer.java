@@ -1,4 +1,4 @@
-package su.bertram.RecipeApp.Kafka.Producer;
+package su.bertram.recipeapp.kafka.producer;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;

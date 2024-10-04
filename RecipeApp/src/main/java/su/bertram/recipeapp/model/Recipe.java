@@ -1,4 +1,4 @@
-package su.bertram.RecipeApp.Model;
+package su.bertram.recipeapp.model;
 
 import java.time.LocalDateTime;
 

@@ -1,4 +1,4 @@
-package su.bertram.RecipeApp;
+package su.bertram.recipeapp;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

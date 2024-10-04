@@ -1,4 +1,4 @@
-package su.bertram.RecipeApp.Repository;
+package su.bertram.recipeapp.repository;
 
 import java.util.List;
 
@@ -8,7 +8,7 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import su.bertram.RecipeApp.Model.Recipe;
+import su.bertram.recipeapp.model.Recipe;
 
 @Repository
 public class JdbcRecipeRepository implements RecipeRepository{

@@ -1,4 +1,4 @@
-package su.bertram.RecipeApp.Controller;
+package su.bertram.recipeapp.controller;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,9 +16,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import su.bertram.RecipeApp.Model.Recipe;
-import su.bertram.RecipeApp.Repository.RecipeRepository;
-import su.bertram.RecipeApp.Service.RecipeService;
+import su.bertram.recipeapp.model.Recipe;
+import su.bertram.recipeapp.repository.RecipeRepository;
+import su.bertram.recipeapp.service.RecipeService;
 
 @CrossOrigin(origins = "http://localhost:8081")
 @RestController

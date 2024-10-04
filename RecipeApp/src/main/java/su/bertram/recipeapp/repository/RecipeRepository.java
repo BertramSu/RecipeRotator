@@ -1,6 +1,6 @@
-package su.bertram.RecipeApp.Repository;
+package su.bertram.recipeapp.repository;
 
-import su.bertram.RecipeApp.Model.Recipe;
+import su.bertram.recipeapp.model.Recipe;
 import java.util.List;
 
 public interface RecipeRepository {

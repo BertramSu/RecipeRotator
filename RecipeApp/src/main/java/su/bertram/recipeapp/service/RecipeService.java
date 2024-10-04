@@ -1,9 +1,9 @@
-package su.bertram.RecipeApp.Service;
+package su.bertram.recipeapp.service;
 
-import su.bertram.RecipeApp.Repository.RecipeRepository;
+import su.bertram.recipeapp.repository.RecipeRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import su.bertram.RecipeApp.Kafka.Producer.MessageProducer;
+import su.bertram.recipeapp.kafka.producer.MessageProducer;
 
 @Service
 public class RecipeService {

@@ -1,4 +1,4 @@
-package su.bertram.RecipeApp;
+package su.bertram.recipeapp;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

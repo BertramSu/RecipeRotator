@@ -1,4 +1,4 @@
-package su.bertram.RecipeApp.Kafka.Producer;
+package su.bertram.recipeapp.kafka.producer;
 
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
